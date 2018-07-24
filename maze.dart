@@ -1,14 +1,16 @@
-
+import "dart:math";
 import "dart:html";
+import "dart:async";
 
+import "direction.dart";
 import "tile.dart";
-import "tile_animation.dart";
-import "color.dart";
 
 class Maze {
 
   static const widthInRooms = 38;
   static const heightInRooms = 38;
+
+  static const roomsCount = widthInRooms * heightInRooms;
 
   static const widthInLinks = widthInRooms - 1;
   static const heightInLinks = heightInRooms - 1;
@@ -20,7 +22,7 @@ class Maze {
 
   static const tilesCount = widthInTiles * heightInTiles;
 
-
+  static final randomGenerator = new Random();
 
 
 //  static const widthInRooms = 20;
@@ -41,7 +43,7 @@ class Maze {
 
   List<Tile> _tiles = new List(tilesCount);
 
-  List<TileAnimation> _tileAnimations = new List();
+  List<Tile> _frontierRooms = [];
 
   Maze(this._canvasSize) {
 
@@ -51,7 +53,8 @@ class Maze {
     _buildTiles();
 
 
-//    _tileAt(10, 12).animate(new Color(0, 0, 0), new Color(0, 255, 0), 0.0, 1500.0);
+    _generateMaze();
+
   }
 
   void _buildTiles() {
@@ -89,12 +92,59 @@ class Maze {
     }
   }
 
+  bool _areCoordinatesInBounds(int xIndex, int yIndex) =>
+      (xIndex > 0) ||
+      (yIndex > 0) ||
+      (xIndex < widthInTiles - 1) ||
+      (yIndex < heightInTiles - 1);
+
   Tile _tileAt(int xIndex, int yIndex) {
+    if (!_areCoordinatesInBounds(xIndex, yIndex)) {
+      return null;
+    }
+
     var tileIndex = (yIndex * widthInTiles) + xIndex;
     return _tiles[tileIndex];
   }
 
+  List<Tile> _neighborsOf(Tile room) {
+    var x = room.xIndex;
+    var y = room.yIndex;
+    var neighbors = [
+      _tileAt(x + 2, y),
+      _tileAt(x, y - 2),
+      _tileAt(x - 2, y),
+      _tileAt(x, y + 2)
+    ];
+    return neighbors.where((neighbor) => neighbor != null).toList(growable: false);
+  }
 
+  Tile get _randomStartingRoom {
+    var xIndex = randomGenerator.nextInt(widthInRooms) * 2 + 1;
+    var yIndex = randomGenerator.nextInt(heightInRooms) * 2 + 1;
+    return _tileAt(xIndex, yIndex);
+  }
+
+  void _exploreStartingRoom() {
+    var startingRoom = _randomStartingRoom;
+
+    startingRoom.animateToState(TileState.exploredRoom);
+
+    var neighbors = _neighborsOf(startingRoom);
+    _frontierRooms.addAll(neighbors);
+
+    for (var neighbor in neighbors) {
+      neighbor.animateToState(TileState.frontierRoom);
+    }
+
+    delay(1000);
+  }
+
+  void _generateMaze() {
+    _exploreStartingRoom();
+  }
+
+  static Future delay(int milliseconds) => new Future.delayed(new Duration(milliseconds:milliseconds)).whenComplete(() {});
 
 
 //  void _buildLinks() {

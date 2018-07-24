@@ -42,6 +42,11 @@ class Tile {
 
   void updateAnimation(double time) {
     if (_animation != null) {
+
+      if (_animation.startTime == null) {
+        _animation.startTime = time;
+      }
+
       var color = _animation.colorAtTime(time);
       red = color.red;
       green = color.green;
@@ -53,8 +58,16 @@ class Tile {
     }
   }
 
-  void animate(Color startColor, Color endColor, double startTime, double duration) {
-    _animation = new TileAnimation(startColor, endColor, startTime, duration);
+  void _animate(Color startColor, Color endColor, double duration) {
+    _animation = new TileAnimation(startColor, endColor, duration);
+  }
+
+  void animateToState(TileState destinationState, {double duration = 300.0}) {
+    var startColor = colorsByState[state];
+    var endColor = colorsByState[destinationState];
+    _animate(startColor, endColor, duration);
+
+    state = destinationState;
   }
 
 }
