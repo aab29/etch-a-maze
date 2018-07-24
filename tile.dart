@@ -20,7 +20,7 @@ class Tile {
     TileState.passage: Color(10.0, 12.0, 1.0)
   };
 
-  TileState state;
+  TileState _state;
 
   final int xIndex;
   final int yIndex;
@@ -31,12 +31,22 @@ class Tile {
 
   TileAnimation _animation;
 
-  Tile(this.xIndex, this.yIndex, this.state) {
-    var color = colorsByState[state];
-    red = color.red;
-    green = color.green;
-    blue = color.blue;
+  Tile(this.xIndex, this.yIndex) {
+    state = TileState.wall;
   }
+
+  void set color(Color value) {
+    red = value.red;
+    green = value.green;
+    blue = value.blue;
+  }
+
+  void set state(TileState value) {
+    _state = value;
+    color = colorsByState[value];
+  }
+
+  void get state => _state;
 
   bool get isAnimating => _animation != null;
 
@@ -47,10 +57,7 @@ class Tile {
         _animation.startTime = time;
       }
 
-      var color = _animation.colorAtTime(time);
-      red = color.red;
-      green = color.green;
-      blue = color.blue;
+      color = _animation.colorAtTime(time);
 
       if (time >= _animation.endTime) {
         _animation = null;
@@ -63,11 +70,11 @@ class Tile {
   }
 
   void animateToState(TileState destinationState, {double duration = 150.0}) {
-    var startColor = colorsByState[state];
+    var startColor = colorsByState[_state];
     var endColor = colorsByState[destinationState];
     _animate(startColor, endColor, duration);
 
-    state = destinationState;
+    _state = destinationState;
   }
 
 }

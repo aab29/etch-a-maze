@@ -15,21 +15,31 @@ class Room {
   final int xIndex;
   final int yIndex;
 
-  final Tile tile;
+  Tile tile;
 
   RoomState state = RoomState.unexplored;
 
   List<Link> _links = List(Direction.values.length);
 
-  Room(this.xIndex, this.yIndex, this.tile);
+  Room(this.xIndex, this.yIndex);
 
   void assignLink(Direction direction, Link link) {
     _links[direction.index] = link;
   }
 
-  Room neighborAt(Direction direction) {
-    return _links[direction.index]?.oppositeRoom(this);
+  Link buildLinkToNeighbor(Room neighbor, Direction directionToNeighbor) {
+    var link = new Link(this, neighbor);
+    assignLink(directionToNeighbor, link);
+
+    var opposite = oppositeDirections[directionToNeighbor];
+    neighbor.assignLink(opposite, link);
+
+    return link;
   }
+
+  Link linkAt(Direction direction) => _links[direction.index];
+
+  Room neighborAt(Direction direction) => linkAt(direction)?.oppositeRoom(this);
 
   List<Room> get neighbors {
     var neighborsList = new List<Room>();

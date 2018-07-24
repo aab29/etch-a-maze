@@ -28,8 +28,8 @@ class Maze {
 
   double _canvasSize;
 
-  double _tileWidth;
-  double _tileHeight;
+  int _tileWidth;
+  int _tileHeight;
 
   List<Tile> _tiles = new List(tilesCount);
   List<Room> _rooms = new List(roomsCount);
@@ -40,20 +40,18 @@ class Maze {
 
   Maze(this._canvasSize) {
 
-    _tileWidth = _canvasSize / widthInTiles;
-    _tileHeight = _canvasSize / heightInTiles;
+    _tileWidth = (_canvasSize / widthInTiles).floor();
+    _tileHeight = (_canvasSize / heightInTiles).floor();
 
     _buildRooms();
     _buildLinks();
-    _buildRemainingTiles();
+//    _buildRemainingTiles();
+    _buildTiles();
+
+    _matchRoomsToTiles();
 
     _generateMaze();
 
-  }
-
-  void _assignTileAt(xIndex, yIndex, tile) {
-    var tileIndex = (yIndex * widthInTiles) + xIndex;
-    _tiles[tileIndex] = tile;
   }
 
   void _buildRooms() {
@@ -61,115 +59,154 @@ class Maze {
       var xIndex = roomIndex % widthInRooms;
       var yIndex = roomIndex ~/ heightInRooms;
 
-      var tileX = xIndex * 2 + 1;
-      var tileY = yIndex * 2 + 1;
-      var tile = new Tile(tileX, tileY, TileState.unexploredRoom);
-      _assignTileAt(tileX, tileY, tile);
+//      var tileX = xIndex * 2 + 1;
+//      var tileY = yIndex * 2 + 1;
+//      var tile = new Tile(tileX, tileY, TileState.unexploredRoom);
+//      _assignTileAt(tileX, tileY, tile);
 
-      var room = new Room(xIndex, yIndex, tile);
+      var room = new Room(xIndex, yIndex);
       _rooms[roomIndex] = room;
     }
   }
+
+//  int easternNeighborX(roomX) => roomX + 1;
+//  int easternNeighborY(roomY) => roomY;
 
   void _buildLinks() {
     for (var room in _rooms) {
       var x = room.xIndex;
       var y = room.yIndex;
 
-      if (x + 1 < widthInRooms) {
-        var tileX = x * 2 + 2;
-        var tileY = y * 2 + 1;
-//        print("tile ($tileX, $tileY)");
-        var tile = new Tile(tileX, tileY, TileState.wall);
-        _assignTileAt(tileX, tileY, tile);
-
-        var eastRoom = _roomAt(x + 1, y);
-        var link = new Link(room, eastRoom, tile);
-        room.assignLink(Direction.east, link);
-        eastRoom.assignLink(Direction.west, link);
+      var easternNeighborX = x + 1;
+      if (easternNeighborX < widthInRooms) {
+        var neighbor = _roomAt(easternNeighborX, y);
+        var link = room.buildLinkToNeighbor(neighbor, Direction.east);
       }
 
-      if (y + 1 < heightInRooms) {
-        var tileX = x * 2 + 1;
-        var tileY = y * 2 + 2;
-//        print("tile ($tileX, $tileY)");
-        var tile = new Tile(tileX, tileY, TileState.wall);
-        _assignTileAt(tileX, tileY, tile);
-
-        var southRoom = _roomAt(x, y + 1);
-        var link = new Link(room, southRoom, tile);
-        room.assignLink(Direction.south, link);
-        southRoom.assignLink(Direction.north, link);
+      var southernNeighborY = y + 1;
+      if (southernNeighborY < heightInRooms) {
+        var neighbor = _roomAt(x, southernNeighborY);
+        var link = room.buildLinkToNeighbor(neighbor, Direction.south);
       }
+
+
+
+//      if (x + 1 < widthInRooms) {
+//        var neighborX = x + 1;
+//        var neighborY = y;
+//        var tileX = x * 2 + 2;
+//        var tileY = y * 2 + 1;
+//        var neighborSide = Direction.east;
+//        var roomSide = Direction.west;
+//        _connectToNeighbor(room, neighborX, neighborY, tileX, tileY, neighborSide, roomSide);
+//      }
+//
+//      if (y + 1 < heightInRooms) {
+//        _connectToNeighbor(room, x, y + 1, x * 2 + 1, y * 2 + 2, Direction.south, Direction.north);
+//      }
+
+//      if (x + 1 < widthInRooms) {
+//        var tileX = x * 2 + 2;
+//        var tileY = y * 2 + 1;
+//        var tile = new Tile(tileX, tileY, TileState.wall);
+//        _assignTileAt(tileX, tileY, tile);
+//
+//        var eastRoom = _roomAt(x + 1, y);
+//        var link = new Link(room, eastRoom, tile);
+//        room.assignLink(Direction.east, link);
+//        eastRoom.assignLink(Direction.west, link);
+//      }
+//
+//      if (y + 1 < heightInRooms) {
+//        var tileX = x * 2 + 1;
+//        var tileY = y * 2 + 2;
+//        var tile = new Tile(tileX, tileY, TileState.wall);
+//        _assignTileAt(tileX, tileY, tile);
+//
+//        var southRoom = _roomAt(x, y + 1);
+//        var link = new Link(room, southRoom, tile);
+//        room.assignLink(Direction.south, link);
+//        southRoom.assignLink(Direction.north, link);
+//      }
 
     }
   }
+
+//  void _connectToNeighbor(Room room, int neighborX, int neighborY, int tileX, int tileY, Direction neighborSide, Direction roomSide) {
+//    var tile = new Tile(tileX, tileY, TileState.wall);
+//    _assignTileAt(tileX, tileY, tile);
+//
+//    var neighbor = _roomAt(neighborX, neighborY);
+//    var link = new Link(room, neighbor, tile);
+//    room.assignLink(neighborSide, link);
+//    neighbor.assignLink(roomSide, link);
+//  }
+
 
   Room _roomAt(int xIndex, int yIndex) {
     var roomIndex = (yIndex * widthInRooms) + xIndex;
     return _rooms[roomIndex];
   }
 
-  void _buildRemainingTiles() {
-    for (var tileIndex = 0; tileIndex < tilesCount; tileIndex++) {
-      if (_tiles[tileIndex] == null) {
-        var xIndex = tileIndex % widthInTiles;
-        var yIndex = tileIndex ~/ heightInTiles;
+  Tile _tileAt(int xIndex, int yIndex) {
+    var tileIndex = (yIndex * widthInTiles) + xIndex;
+    return _tiles[tileIndex];
+  }
 
-        _tiles[tileIndex] = new Tile(xIndex, yIndex, TileState.wall);
+//  void _assignTileAt(xIndex, yIndex, tile) {
+//    var tileIndex = (yIndex * widthInTiles) + xIndex;
+//    _tiles[tileIndex] = tile;
+//  }
+
+  bool isInnerTile(tileX, tileY) =>
+      (tileX > 0) ||
+      (tileY > 0) ||
+      (tileX < widthInTiles - 1) ||
+      (tileY < heightInTiles - 1);
+
+  void _buildTiles() {
+    for (var tileY = 0; tileY < heightInTiles; tileY++) {
+      for (var tileX = 0; tileX < widthInTiles; tileX++) {
+        var tileIndex = (tileY * widthInTiles) + tileX;
+        _tiles[tileIndex] = new Tile(tileX, tileY);
       }
     }
   }
 
-//  void _buildTiles() {
+  void _matchRoomsToTiles() {
+
+    for (var room in _rooms) {
+
+      var roomTile = _tileAt(room.xIndex * 2 + 1, room.yIndex * 2 + 1);
+      roomTile.state = TileState.unexploredRoom;
+      room.tile = roomTile;
+
+      var easternLink = room.linkAt(Direction.east);
+      if (easternLink != null) {
+        easternLink.tile = _tileAt(room.xIndex * 2 + 2, room.yIndex * 2 + 1);
+      }
+
+      var southernLink = room.linkAt(Direction.south);
+      if (southernLink != null) {
+        southernLink.tile = _tileAt(room.xIndex * 2 + 1, room.yIndex * 2 + 2);
+      }
+    }
+
+  }
+
+//  void _buildRemainingTiles() {
 //    for (var tileIndex = 0; tileIndex < tilesCount; tileIndex++) {
-//      var xIndex = tileIndex % widthInTiles;
-//      var yIndex = tileIndex ~/ heightInTiles;
+//      if (_tiles[tileIndex] == null) {
+//        var xIndex = tileIndex % widthInTiles;
+//        var yIndex = tileIndex ~/ heightInTiles;
 //
-//      var tile;
-//
-//      if ((xIndex == 0) ||
-//          (yIndex == 0) ||
-//          (xIndex == widthInTiles - 1) ||
-//          (yIndex == heightInTiles - 1)) {
-//        tile = new Tile(xIndex, yIndex, TileState.outerTile);
-//      } else if (xIndex.isOdd && yIndex.isOdd) {
-//        tile = new Tile(xIndex, yIndex, TileState.unexploredRoom);
-//
-//        var room = _roomAt((xIndex - 1) ~/ 2, (yIndex - 1) ~/ 2);
-//        room.tile = tile;
-//      } else {
-//        tile = new T
+//        _tiles[tileIndex] = new Tile(xIndex, yIndex, TileState.wall);
 //      }
-//
-////      var state = _initialTileStateForCoordinates(xIndex, yIndex);
-////      var tile = new Tile(xIndex, yIndex, state);
-//
-////      if (state == TileState.unexploredRoom) {
-////        _rooms.add(new Room(tile));
-////      }
-//
-//      _tiles[tileIndex] = tile;
 //    }
 //  }
 
-//  TileState _initialTileStateForCoordinates(int xIndex, int yIndex) {
-//    if ((xIndex == 0) ||
-//        (yIndex == 0) ||
-//        (xIndex == widthInTiles - 1) ||
-//        (yIndex == heightInTiles - 1)) {
-//      return TileState.outerTile;
-//    } else if (xIndex.isOdd && yIndex.isOdd) {
-//      return TileState.unexploredRoom;
-//    } else {
-//      return TileState.wall;
-//    }
-//  }
-
-  void drawAllTiles(CanvasRenderingContext2D context, double time) {
+  void drawAllTiles(CanvasRenderingContext2D context) {
     for (var tile in _tiles) {
-      tile.updateAnimation(time);
-
       context.setFillColorRgb(tile.red, tile.green, tile.blue);
       context.fillRect(tile.xIndex * _tileWidth, tile.yIndex * _tileHeight, _tileWidth, _tileHeight);
     }

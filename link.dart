@@ -11,11 +11,11 @@ class Link {
   final Room roomA;
   final Room roomB;
 
-  final Tile tile;
+  Tile tile;
 
 //  LinkState state = LinkState.wall;
 
-  Link(this.roomA, this.roomB, this.tile);
+  Link(this.roomA, this.roomB);
 
   Room oppositeRoom(Room room) {
     if (room == roomA) {

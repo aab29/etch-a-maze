@@ -34,10 +34,7 @@ class Simulation {
     _canvasSize = _canvas.width.toDouble();
 
     _maze = new Maze(_canvasSize);
-
-    for (var i = 0; i < 5; i++) {
-      _maze.drawAllTiles(_context, 0.0);
-    }
+    _maze.drawAllTiles(_context);
 
     _startAnimating();
   }
