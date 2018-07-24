@@ -3,7 +3,6 @@ import "color.dart";
 import "tile_animation.dart";
 
 enum TileState {
-//  outerTile,
   unexploredRoom,
   frontierRoom,
   exploredRoom,
@@ -14,12 +13,11 @@ enum TileState {
 class Tile {
 
   static const colorsByState = {
-//    TileState.outerTile: Color(70.0, 0.0, 90.0),
-    TileState.unexploredRoom: Color(0.0, 29.0, 226.0),
-    TileState.frontierRoom: Color(0.0, 255.0, 0.0),
-    TileState.exploredRoom: Color(0.0, 0.0, 0.0),
-    TileState.wall: Color(0.0, 0.0, 255.0),
-    TileState.passage: Color(0.0, 0.0, 0.0)
+    TileState.unexploredRoom: Color(161.0, 64.0, 210.0),
+    TileState.frontierRoom: Color(253.0, 213.0, 0.0),
+    TileState.exploredRoom: Color(10.0, 12.0, 1.0),
+    TileState.wall: Color(141.0, 37.0, 199.0),
+    TileState.passage: Color(10.0, 12.0, 1.0)
   };
 
   TileState state;
@@ -64,7 +62,7 @@ class Tile {
     _animation = new TileAnimation(startColor, endColor, duration);
   }
 
-  void animateToState(TileState destinationState, {double duration = 900.0}) {
+  void animateToState(TileState destinationState, {double duration = 150.0}) {
     var startColor = colorsByState[state];
     var endColor = colorsByState[destinationState];
     _animate(startColor, endColor, duration);

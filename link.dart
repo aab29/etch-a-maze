@@ -1,10 +1,10 @@
 import "tile.dart";
 import "room.dart";
 
-enum LinkState {
-  wall,
-  passage
-}
+//enum LinkState {
+//  wall,
+//  passage
+//}
 
 class Link {
 
@@ -13,7 +13,7 @@ class Link {
 
   final Tile tile;
 
-  LinkState state = LinkState.wall;
+//  LinkState state = LinkState.wall;
 
   Link(this.roomA, this.roomB, this.tile);
 

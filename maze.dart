@@ -9,8 +9,8 @@ import "link.dart";
 
 class Maze {
 
-  static const widthInRooms = 38;
-  static const heightInRooms = 38;
+  static const widthInRooms = 23;
+  static const heightInRooms = 23;
 
   static const roomsCount = widthInRooms * heightInRooms;
 
@@ -26,18 +26,6 @@ class Maze {
 
   static final randomGenerator = new Random();
 
-
-//  static const widthInRooms = 20;
-//  static const heightInRooms = 20;
-//
-//  static const roomsCount = widthInRooms * heightInRooms;
-//
-//  static const widthInBarriers = widthInRooms - 1;
-//  static const heightInBarriers = heightInRooms - 1;
-//
-//  static const widthInTiles = widthInRooms + widthInBarriers;
-//  static const heightInTiles = heightInRooms + heightInBarriers;
-
   double _canvasSize;
 
   double _tileWidth;
@@ -47,6 +35,8 @@ class Maze {
   List<Room> _rooms = new List(roomsCount);
 
   List<Room> _frontierRooms = [];
+
+  bool isGenerating = false;
 
   Maze(this._canvasSize) {
 
@@ -247,10 +237,12 @@ class Maze {
       neighbor.tile.animateToState(TileState.frontierRoom);
     }
 
-    await rest(200);
+    await rest(20);
   }
 
   void _generateMaze() async {
+    isGenerating = true;
+
     _exploreStartingRoom();
 
     while (_frontierRooms.isNotEmpty) {
@@ -258,26 +250,29 @@ class Maze {
 
       var link = frontierRoom.randomCarvableLink;
 
-      link.state = LinkState.passage;
-      link.tile.animateToState(TileState.passage);
-      await rest(100);
+//      link.state = LinkState.passage;
+      link.tile.animateToState(TileState.passage, duration: 120.0);
+      await rest(10);
       frontierRoom.state = RoomState.explored;
-      frontierRoom.tile.animateToState(TileState.exploredRoom);
-      await rest(100);
+      frontierRoom.tile.animateToState(TileState.exploredRoom, duration: 240.0);
+      await rest(20);
 
       var neighbors = frontierRoom.unexploredNeighbors;
       for (var neighbor in neighbors) {
         _frontierRooms.add(neighbor);
         neighbor.state = RoomState.frontier;
-        neighbor.tile.animateToState(TileState.frontierRoom);
+        neighbor.tile.animateToState(TileState.frontierRoom, duration: 355.0);
       }
 
-      await rest(200);
+      await rest(40);
     }
+
+    await rest(1500);
+    isGenerating = false;
+    print("Finished generating");
   }
 
   static Future rest(int milliseconds) => new Future.delayed(new Duration(milliseconds:milliseconds));
-
 
 //  void _buildLinks() {
 //

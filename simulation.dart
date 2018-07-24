@@ -13,8 +13,6 @@ class Simulation {
 
   double _canvasSize;
 
-  num _lastTime;
-
   Maze _maze;
 
 //  Grid _grid;
@@ -49,14 +47,12 @@ class Simulation {
   }
 
   void _update(num time) {
-    _lastTime = time;
-
 //    _maze.drawAllTiles(_context, time);
     _maze.drawAnimatingTiles(_context, time);
 
-//    if (time < 4000) {
+    if (_maze.isGenerating) {
       window.animationFrame.then(_update);
-//    }
+    }
   }
 
 //  Simulation(this._canvas, this._context) {
