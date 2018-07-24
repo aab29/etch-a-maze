@@ -1,17 +1,11 @@
-
 import "maze.dart";
 import "tile.dart";
 import "link.dart";
 import "direction.dart";
 
-enum RoomState {
-  unexplored,
-  frontier,
-  explored
-}
+enum RoomState { unexplored, frontier, explored }
 
 class Room {
-
   final int xIndex;
   final int yIndex;
 
@@ -53,7 +47,8 @@ class Room {
   List<Room> get unexploredNeighbors {
     var neighborsList = new List<Room>();
     for (var link in _links) {
-      if ((link != null) && (link.oppositeRoom(this).state == RoomState.unexplored)) {
+      if ((link != null) &&
+          (link.oppositeRoom(this).state == RoomState.unexplored)) {
         var neighbor = link.oppositeRoom(this);
         neighborsList.add(neighbor);
       }
@@ -77,5 +72,4 @@ class Room {
     var linkIndex = Maze.randomGenerator.nextInt(links.length);
     return links[linkIndex];
   }
-
 }

@@ -2,7 +2,6 @@ import "dart:html";
 
 import "maze.dart";
 
-
 class Simulation {
   CanvasElement _canvas;
   CanvasRenderingContext2D _context;
@@ -31,5 +30,4 @@ class Simulation {
       window.animationFrame.then(_update);
     }
   }
-
 }

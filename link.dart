@@ -2,7 +2,6 @@ import "tile.dart";
 import "room.dart";
 
 class Link {
-
   final Room roomA;
   final Room roomB;
 
@@ -19,5 +18,4 @@ class Link {
       throw new StateError("Room not contained in link");
     }
   }
-
 }

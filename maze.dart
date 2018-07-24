@@ -7,7 +7,6 @@ import "tile.dart";
 import "room.dart";
 
 class Maze {
-
   static const widthInRooms = 23;
   static const heightInRooms = 23;
 
@@ -18,8 +17,10 @@ class Maze {
 
   static const outerTilesCountPerDimension = 2;
 
-  static const widthInTiles = widthInRooms + widthInLinks + outerTilesCountPerDimension;
-  static const heightInTiles = heightInRooms + heightInLinks + outerTilesCountPerDimension;
+  static const widthInTiles =
+      widthInRooms + widthInLinks + outerTilesCountPerDimension;
+  static const heightInTiles =
+      heightInRooms + heightInLinks + outerTilesCountPerDimension;
 
   static const tilesCount = widthInTiles * heightInTiles;
 
@@ -38,7 +39,6 @@ class Maze {
   bool isGenerating = false;
 
   Maze(this._canvasSize) {
-
     _tileWidth = (_canvasSize / widthInTiles).floor();
     _tileHeight = (_canvasSize / heightInTiles).floor();
 
@@ -49,7 +49,6 @@ class Maze {
     _matchRoomsToTiles();
 
     _generateMaze();
-
   }
 
   void _buildRooms() {
@@ -78,7 +77,6 @@ class Maze {
         var neighbor = _roomAt(x, southernNeighborY);
         room.buildLinkToNeighbor(neighbor, Direction.south);
       }
-
     }
   }
 
@@ -122,7 +120,8 @@ class Maze {
   void drawAllTiles(CanvasRenderingContext2D context) {
     for (var tile in _tiles) {
       context.setFillColorRgb(tile.red, tile.green, tile.blue);
-      context.fillRect(tile.xIndex * _tileWidth, tile.yIndex * _tileHeight, _tileWidth, _tileHeight);
+      context.fillRect(tile.xIndex * _tileWidth, tile.yIndex * _tileHeight,
+          _tileWidth, _tileHeight);
     }
   }
 
@@ -132,7 +131,8 @@ class Maze {
         tile.updateAnimation(time);
 
         context.setFillColorRgb(tile.red, tile.green, tile.blue);
-        context.fillRect(tile.xIndex * _tileWidth, tile.yIndex * _tileHeight, _tileWidth, _tileHeight);
+        context.fillRect(tile.xIndex * _tileWidth, tile.yIndex * _tileHeight,
+            _tileWidth, _tileHeight);
       }
     }
   }
@@ -195,6 +195,6 @@ class Maze {
     print("Finished generating");
   }
 
-  static Future rest(int milliseconds) => new Future.delayed(new Duration(milliseconds:milliseconds));
-
+  static Future rest(int milliseconds) =>
+      new Future.delayed(new Duration(milliseconds: milliseconds));
 }

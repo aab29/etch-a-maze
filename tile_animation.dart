@@ -1,8 +1,6 @@
-
 import "color.dart";
 
 class TileAnimation {
-
   final Color startColor;
   final Color endColor;
 
@@ -15,7 +13,8 @@ class TileAnimation {
 
   double _elapsedTime(double time) => time - startTime;
 
-  double _progressAtTime(double time) => (_elapsedTime(time) / _duration).clamp(0.0, 1.0);
+  double _progressAtTime(double time) =>
+      (_elapsedTime(time) / _duration).clamp(0.0, 1.0);
 
   Color colorAtTime(double time) {
     var progress = _progressAtTime(time);
@@ -23,9 +22,9 @@ class TileAnimation {
 
     return new Color(
         (startColor.red * invertedProgress + endColor.red * progress).toInt(),
-        (startColor.green * invertedProgress + endColor.green * progress).toInt(),
-        (startColor.blue * invertedProgress + endColor.blue * progress).toInt()
-    );
+        (startColor.green * invertedProgress + endColor.green * progress)
+            .toInt(),
+        (startColor.blue * invertedProgress + endColor.blue * progress)
+            .toInt());
   }
-
 }

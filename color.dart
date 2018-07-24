@@ -1,4 +1,3 @@
-
 class Color {
   final num red;
   final num green;

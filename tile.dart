@@ -1,17 +1,9 @@
-
 import "color.dart";
 import "tile_animation.dart";
 
-enum TileState {
-  unexploredRoom,
-  frontierRoom,
-  exploredRoom,
-  wall,
-  passage
-}
+enum TileState { unexploredRoom, frontierRoom, exploredRoom, wall, passage }
 
 class Tile {
-
   static const colorsByState = {
     TileState.unexploredRoom: Color(161.0, 64.0, 210.0),
     TileState.frontierRoom: Color(253.0, 213.0, 0.0),
@@ -52,7 +44,6 @@ class Tile {
 
   void updateAnimation(double time) {
     if (isAnimating) {
-
       if (_animation.startTime == null) {
         _animation.startTime = time;
       }
@@ -76,5 +67,4 @@ class Tile {
 
     _state = destinationState;
   }
-
 }
