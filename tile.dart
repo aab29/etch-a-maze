@@ -3,7 +3,7 @@ import "color.dart";
 import "tile_animation.dart";
 
 enum TileState {
-  outerTile,
+//  outerTile,
   unexploredRoom,
   frontierRoom,
   exploredRoom,
@@ -14,7 +14,7 @@ enum TileState {
 class Tile {
 
   static const colorsByState = {
-    TileState.outerTile: Color(70.0, 0.0, 90.0),
+//    TileState.outerTile: Color(70.0, 0.0, 90.0),
     TileState.unexploredRoom: Color(0.0, 29.0, 156.0),
     TileState.frontierRoom: Color(0.0, 255.0, 0.0),
     TileState.exploredRoom: Color(0.0, 0.0, 0.0),
