@@ -1,4 +1,5 @@
 
+import "maze.dart";
 import "tile.dart";
 import "link.dart";
 import "direction.dart";
@@ -31,13 +32,44 @@ class Room {
   }
 
   List<Room> get neighbors {
-    var neighbors = [];
+    var neighborsList = new List<Room>();
     for (var link in _links) {
       if (link != null) {
-        neighbors.add(link.oppositeRoom(this));
+        var neighbor = link.oppositeRoom(this);
+        neighborsList.add(neighbor);
+//        print(neighborsList);
       }
     }
-    return neighbors;
+    return neighborsList;
+  }
+
+  List<Room> get unexploredNeighbors {
+    var neighborsList = new List<Room>();
+    for (var link in _links) {
+      if ((link != null) && (link.oppositeRoom(this).state == RoomState.unexplored)) {
+        var neighbor = link.oppositeRoom(this);
+        neighborsList.add(neighbor);
+      }
+    }
+    return neighborsList;
+  }
+
+  List<Link> get carvableLinks {
+    var linksList = new List<Link>();
+    for (var link in _links) {
+      if ((link != null) &&
+          (link.oppositeRoom(this).state == RoomState.explored)) {
+        linksList.add(link);
+      }
+    }
+//    print(linksList.length);
+    return linksList;
+  }
+
+  Link get randomCarvableLink {
+    var links = carvableLinks;
+    var linkIndex = Maze.randomGenerator.nextInt(links.length);
+    return links[linkIndex];
   }
 
 }

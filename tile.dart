@@ -15,7 +15,7 @@ class Tile {
 
   static const colorsByState = {
 //    TileState.outerTile: Color(70.0, 0.0, 90.0),
-    TileState.unexploredRoom: Color(0.0, 29.0, 156.0),
+    TileState.unexploredRoom: Color(0.0, 29.0, 226.0),
     TileState.frontierRoom: Color(0.0, 255.0, 0.0),
     TileState.exploredRoom: Color(0.0, 0.0, 0.0),
     TileState.wall: Color(0.0, 0.0, 255.0),
@@ -40,8 +40,10 @@ class Tile {
     blue = color.blue;
   }
 
+  bool get isAnimating => _animation != null;
+
   void updateAnimation(double time) {
-    if (_animation != null) {
+    if (isAnimating) {
 
       if (_animation.startTime == null) {
         _animation.startTime = time;
@@ -62,7 +64,7 @@ class Tile {
     _animation = new TileAnimation(startColor, endColor, duration);
   }
 
-  void animateToState(TileState destinationState, {double duration = 300.0}) {
+  void animateToState(TileState destinationState, {double duration = 900.0}) {
     var startColor = colorsByState[state];
     var endColor = colorsByState[destinationState];
     _animate(startColor, endColor, duration);

@@ -56,9 +56,8 @@ class Maze {
     _buildRooms();
     _buildLinks();
     _buildRemainingTiles();
-//
-//
-//    _generateMaze();
+
+    _generateMaze();
 
   }
 
@@ -87,7 +86,7 @@ class Maze {
       var x = room.xIndex;
       var y = room.yIndex;
 
-      if (x + 1 < widthInRooms - 1) {
+      if (x + 1 < widthInRooms) {
         var tileX = x * 2 + 2;
         var tileY = y * 2 + 1;
 //        print("tile ($tileX, $tileY)");
@@ -100,7 +99,7 @@ class Maze {
         eastRoom.assignLink(Direction.west, link);
       }
 
-      if (y + 1 < heightInRooms - 1) {
+      if (y + 1 < heightInRooms) {
         var tileX = x * 2 + 1;
         var tileY = y * 2 + 2;
 //        print("tile ($tileX, $tileY)");
@@ -178,12 +177,22 @@ class Maze {
 //  }
 
   void drawAllTiles(CanvasRenderingContext2D context, double time) {
-
     for (var tile in _tiles) {
       tile.updateAnimation(time);
 
       context.setFillColorRgb(tile.red, tile.green, tile.blue);
       context.fillRect(tile.xIndex * _tileWidth, tile.yIndex * _tileHeight, _tileWidth, _tileHeight);
+    }
+  }
+
+  void drawAnimatingTiles(CanvasRenderingContext2D context, double time) {
+    for (var tile in _tiles) {
+      if (tile.isAnimating) {
+        tile.updateAnimation(time);
+
+        context.setFillColorRgb(tile.red, tile.green, tile.blue);
+        context.fillRect(tile.xIndex * _tileWidth, tile.yIndex * _tileHeight, _tileWidth, _tileHeight);
+      }
     }
   }
 
@@ -218,32 +227,56 @@ class Maze {
     var xIndex = randomGenerator.nextInt(widthInRooms);
     var yIndex = randomGenerator.nextInt(heightInRooms);
     return _roomAt(xIndex, yIndex);
-
-//    var xIndex = randomGenerator.nextInt(widthInRooms) * 2 + 1;
-//    var yIndex = randomGenerator.nextInt(heightInRooms) * 2 + 1;
-//    return _tileAt(xIndex, yIndex);
   }
 
-  void _exploreStartingRoom() {
+  Room get _removeRandomFrontierRoom {
+    var roomIndex = randomGenerator.nextInt(_frontierRooms.length);
+    return _frontierRooms.removeAt(roomIndex);
+  }
+
+  void _exploreStartingRoom() async {
     var startingRoom = _randomStartingRoom;
 
+    startingRoom.state = RoomState.explored;
     startingRoom.tile.animateToState(TileState.exploredRoom);
 
-//    var neighbors = _neighborsOf(startingRoom);
-//    _frontierRooms.addAll(neighbors);
+    var neighbors = startingRoom.neighbors;
+    for (var neighbor in neighbors) {
+      _frontierRooms.add(neighbor);
+      neighbor.state = RoomState.frontier;
+      neighbor.tile.animateToState(TileState.frontierRoom);
+    }
 
-//    for (var neighbor in neighbors) {
-//      neighbor.animateToState(TileState.frontierRoom);
-//    }
-
-    delay(1000);
+    await rest(200);
   }
 
-  void _generateMaze() {
+  void _generateMaze() async {
     _exploreStartingRoom();
+
+    while (_frontierRooms.isNotEmpty) {
+      var frontierRoom = _removeRandomFrontierRoom;
+
+      var link = frontierRoom.randomCarvableLink;
+
+      link.state = LinkState.passage;
+      link.tile.animateToState(TileState.passage);
+      await rest(100);
+      frontierRoom.state = RoomState.explored;
+      frontierRoom.tile.animateToState(TileState.exploredRoom);
+      await rest(100);
+
+      var neighbors = frontierRoom.unexploredNeighbors;
+      for (var neighbor in neighbors) {
+        _frontierRooms.add(neighbor);
+        neighbor.state = RoomState.frontier;
+        neighbor.tile.animateToState(TileState.frontierRoom);
+      }
+
+      await rest(200);
+    }
   }
 
-  static Future delay(int milliseconds) => new Future.delayed(new Duration(milliseconds:milliseconds)).whenComplete(() {});
+  static Future rest(int milliseconds) => new Future.delayed(new Duration(milliseconds:milliseconds));
 
 
 //  void _buildLinks() {

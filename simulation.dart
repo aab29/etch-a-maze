@@ -37,6 +37,10 @@ class Simulation {
 
     _maze = new Maze(_canvasSize);
 
+    for (var i = 0; i < 5; i++) {
+      _maze.drawAllTiles(_context, 0.0);
+    }
+
     _startAnimating();
   }
 
@@ -47,11 +51,12 @@ class Simulation {
   void _update(num time) {
     _lastTime = time;
 
-    _maze.drawAllTiles(_context, time);
+//    _maze.drawAllTiles(_context, time);
+    _maze.drawAnimatingTiles(_context, time);
 
-    if (time < 2000) {
+//    if (time < 4000) {
       window.animationFrame.then(_update);
-    }
+//    }
   }
 
 //  Simulation(this._canvas, this._context) {
