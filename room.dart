@@ -27,14 +27,12 @@ class Room {
     _links[direction.index] = link;
   }
 
-  Link buildLinkToNeighbor(Room neighbor, Direction directionToNeighbor) {
+  void buildLinkToNeighbor(Room neighbor, Direction directionToNeighbor) {
     var link = new Link(this, neighbor);
     assignLink(directionToNeighbor, link);
 
     var opposite = oppositeDirections[directionToNeighbor];
     neighbor.assignLink(opposite, link);
-
-    return link;
   }
 
   Link linkAt(Direction direction) => _links[direction.index];
@@ -47,7 +45,6 @@ class Room {
       if (link != null) {
         var neighbor = link.oppositeRoom(this);
         neighborsList.add(neighbor);
-//        print(neighborsList);
       }
     }
     return neighborsList;
@@ -72,7 +69,6 @@ class Room {
         linksList.add(link);
       }
     }
-//    print(linksList.length);
     return linksList;
   }
 
