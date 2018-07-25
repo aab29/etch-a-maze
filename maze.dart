@@ -148,20 +148,24 @@ class Maze {
     return _frontierRooms.removeAt(roomIndex);
   }
 
-  void _exploreStartingRoom() async {
+  void _markNeighborsAsFrontier(Room room) async {
+    var neighbors = room.unexploredNeighbors;
+    for (var neighbor in neighbors) {
+      _frontierRooms.add(neighbor);
+      neighbor.state = RoomState.frontier;
+      neighbor.tile.animateToState(TileState.frontierRoom, duration: 355.0);
+    }
+
+    await rest(40);
+  }
+
+  void _exploreStartingRoom() {
     var startingRoom = _randomStartingRoom;
 
     startingRoom.state = RoomState.explored;
     startingRoom.tile.animateToState(TileState.exploredRoom);
 
-    var neighbors = startingRoom.neighbors;
-    for (var neighbor in neighbors) {
-      _frontierRooms.add(neighbor);
-      neighbor.state = RoomState.frontier;
-      neighbor.tile.animateToState(TileState.frontierRoom);
-    }
-
-    await rest(20);
+    _markNeighborsAsFrontier(startingRoom);
   }
 
   void _generateMaze() async {
@@ -180,12 +184,7 @@ class Maze {
       frontierRoom.tile.animateToState(TileState.exploredRoom, duration: 240.0);
       await rest(20);
 
-      var neighbors = frontierRoom.unexploredNeighbors;
-      for (var neighbor in neighbors) {
-        _frontierRooms.add(neighbor);
-        neighbor.state = RoomState.frontier;
-        neighbor.tile.animateToState(TileState.frontierRoom, duration: 355.0);
-      }
+      _markNeighborsAsFrontier(frontierRoom);
 
       await rest(40);
     }
@@ -197,4 +196,5 @@ class Maze {
 
   static Future rest(int milliseconds) =>
       new Future.delayed(new Duration(milliseconds: milliseconds));
+
 }
