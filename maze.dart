@@ -149,6 +149,8 @@ class Maze {
   }
 
   void _markNeighborsAsFrontier(Room room) async {
+    await rest(20);
+
     var neighbors = room.unexploredNeighbors;
     for (var neighbor in neighbors) {
       _frontierRooms.add(neighbor);
@@ -156,22 +158,22 @@ class Maze {
       neighbor.tile.animateToState(TileState.frontierRoom, duration: 355.0);
     }
 
-    await rest(40);
+    await rest(60);
   }
 
-  void _exploreStartingRoom() {
+  void _exploreStartingRoom() async {
     var startingRoom = _randomStartingRoom;
 
     startingRoom.state = RoomState.explored;
-    startingRoom.tile.animateToState(TileState.exploredRoom);
+    startingRoom.tile.animateToState(TileState.exploredRoom, duration: 240.0);
 
-    _markNeighborsAsFrontier(startingRoom);
+    await _markNeighborsAsFrontier(startingRoom);
   }
 
   void _generateMaze() async {
     isGenerating = true;
 
-    _exploreStartingRoom();
+    await _exploreStartingRoom();
 
     while (_frontierRooms.isNotEmpty) {
       var frontierRoom = _removeRandomFrontierRoom;
@@ -182,14 +184,11 @@ class Maze {
       await rest(10);
       frontierRoom.state = RoomState.explored;
       frontierRoom.tile.animateToState(TileState.exploredRoom, duration: 240.0);
-      await rest(20);
 
-      _markNeighborsAsFrontier(frontierRoom);
-
-      await rest(40);
+      await _markNeighborsAsFrontier(frontierRoom);
     }
 
-    await rest(1500);
+    await rest(400);
     isGenerating = false;
     print("Finished generating");
   }
