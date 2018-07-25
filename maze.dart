@@ -190,10 +190,8 @@ class Maze {
 
     await rest(400);
     isGenerating = false;
-    print("Finished generating");
   }
 
   static Future rest(int milliseconds) =>
       new Future.delayed(new Duration(milliseconds: milliseconds));
-
 }
